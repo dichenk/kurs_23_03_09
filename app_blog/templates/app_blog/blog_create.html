@@ -1,0 +1,22 @@
+{% extends 'app_mainpage/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+								<div class="col-main col-12 col-lg-8 pe-lg-4">
+									<section class="resume-summary-section resume-section">
+										<div class="resume-summary-desc">
+											<form method="post"  enctype="multipart/form-data">
+												<div class="form_settings">
+												{% csrf_token %}
+												{{ form|crispy }}
+												<button class="btn btn-primary" type="submit">сохранить</button>
+												</div>
+											</form>
+										</div>
+									</section><!--//resume-section-->
+								</div><!--//col-8-->
+
+{% endblock %}

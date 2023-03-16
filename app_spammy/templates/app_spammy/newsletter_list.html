@@ -1,0 +1,69 @@
+{% extends 'app_mainpage/base.html' %}
+
+{% block content %}
+
+								<div class="col-main col-12 col-lg-8 pe-lg-4">
+									<section class="resume-summary-section resume-section">
+										<h3 class="resume-section-heading text-uppercase py-2 py-lg-3 py-2 py-lg-3"><i class="resume-section-heading-icon bi bi-person me-2"></i>Рассылки</h3>
+										<div class="resume-summary-desc">
+											
+											{% for object in object_list %}
+											<div class="card">
+												<div class="card-body">
+													<h4 class="card-title">{{object.name_of}}</h4>
+													<h6 class="card-subtitle mb-2 text-muted">{{object.comment}}</h6>
+													
+													<p class="card-text"> 
+														clients -
+														{% for someinfo in object.client.all %}
+														{{ someinfo }}
+														{% endfor %}
+													</p>
+													
+													
+													<p class="card-text">posting date - {{object.posting_date}}</p>
+													<p class="card-text">posting time - {{object.posting_time}}</p>
+													<p class="card-text">frequency - {{object.frequency}}</p>
+													<p class="card-text">mailing status - {{object.mailing_status}}</p>
+													{%  if object.mailing_status == 'created' %}
+														<p><a href='{% url 'app_spammy:status' object.pk %}'> - start mailinglist</a></p>
+													{% elif object.mailing_status == 'launched' %}
+														<p><a href='{% url 'app_spammy:status' object.pk %}'> - stop mailinglist</a></p>
+													{% endif %}
+													<a href="#" class="card-link">Подробнее</a>
+													<a href="{% url 'app_spammy:update_newsletter' object.pk %}" class="card-link">Редактировать</a>
+													<a href="{% url 'app_spammy:delete_newsletter' object.pk %}" class="card-link">Удалить</a>
+													
+												</div>
+											</div>
+											<br>
+											{% empty %}
+											Добавьте новую рассылку, и она появится здесь.
+											{% endfor %}
+											<a href="{% url 'app_spammy:create_newsletter' %}">Добавить рассылку</a>
+										</div>
+									</section><!--//resume-section-->
+								<hr>
+								
+								{% if object_list %}
+								<div class="pagination">
+									<span class="step-links">
+										{% if page_obj.has_previous %}
+											<a href="?page=1">&laquo; first</a>
+											<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+										{% endif %}
+										
+										<span class="current">
+											Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+										</span>
+										
+										{% if page_obj.has_next %}
+											<a href="?page={{ page_obj.next_page_number }}">next</a>
+											<a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+										{% endif %}
+									</span>
+								</div>
+								{% endif %}
+							</div><!--//col-8-->
+
+{% endblock %}

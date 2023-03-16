@@ -1,0 +1,50 @@
+{% extends 'app_mainpage/base.html' %}
+
+{% block content %}
+
+								<div class="col-main col-12 col-lg-8 pe-lg-4">
+								<p><a href='{% url 'app_blog:blog_create' %}'>Создать статью</a></p>
+								{% for object in object_list %}
+									<section class="resume-summary-section resume-section">
+										<h3 class="resume-section-heading text-uppercase py-2 py-lg-3 py-2 py-lg-3"><i class="resume-section-heading-icon bi bi-person me-2"></i>{{object.article_head}}</h3>
+										<div class="resume-summary-desc">
+											<img width=50% src="/media/{{object.image}}">
+											<p>{{object.article_body|truncatechars:30}}...</p>
+											<p>
+												<a href='{% url 'app_blog:blog_detail' object.pk %}'>Подробнее</a>
+												<a href='{% url 'app_blog:blog_update' object.pk %}'>Редактировать</a>
+												<a href='{% url 'app_blog:blog_delete' object.pk %}'>Удалить</a>
+											</p>
+											<p>дата создания {{object.date_create}}</p>
+											<p>последнее изменение {{object.date_last_change}}</p>
+											<p>количество просмотров {{object.num_of_views}}</p>
+										</div>
+									</section><!--//resume-section-->
+									<hr>
+								{% endfor %}
+								
+								<div class="pagination">
+									<span class="step-links">
+									
+										{% if page_obj.has_previous %}
+											<a href="?page=1">&laquo; first</a>
+											<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+										{% endif %}
+										
+										<span class="current">
+											Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+										</span>
+										
+										{% if page_obj.has_next %}
+											<a href="?page={{ page_obj.next_page_number }}">next</a>
+											<a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+										{% endif %}
+									</span>
+								</div>
+
+							
+								
+								
+								</div><!--//col-8-->
+
+{% endblock %}

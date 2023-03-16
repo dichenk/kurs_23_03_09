@@ -1,0 +1,35 @@
+{% extends 'app_mainpage/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+								<div class="col-main col-12 col-lg-8 pe-lg-4">
+								
+									<section class="resume-summary-section resume-section">
+										<div class="resume-summary-desc">
+											
+											<form method="post">
+			             <div class="form_settings">
+
+                   {% csrf_token %}
+				   	<p> Вы уверены? Клиент {{object.name}} будет удален навсегда. </p>
+				   <a href='{% url 'app_spammy:client_list' %}'> не удалять </a>
+                   <button class="btn btn-primary" type="submit">
+                       удалить
+                   </button>
+				   </div>
+               </form>
+											
+											
+										</div>
+									</section><!--//resume-section-->
+									<hr>
+
+							
+								
+								
+								</div><!--//col-8-->
+
+{% endblock %}

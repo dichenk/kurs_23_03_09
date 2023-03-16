@@ -1,0 +1,21 @@
+{% extends 'app_mainpage/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+								<div class="col-main col-12 col-lg-8 pe-lg-4">
+									<section class="resume-summary-section resume-section">
+										<h3 class="resume-section-heading text-uppercase py-2 py-lg-3 py-2 py-lg-3"><i class="resume-section-heading-icon bi bi-person me-2"></i>Изменить клиента</h3>
+										<div class="resume-summary-desc">
+											<form method="post">
+												<div class="form_settings">
+													{% csrf_token %}
+													{{ form|crispy }}
+													<button class="btn btn-primary" type="submit">Сохранить</button>
+												</div>
+											</form>
+										</div>
+									</section>
+								</div><!--//col-8-->
+{% endblock %}

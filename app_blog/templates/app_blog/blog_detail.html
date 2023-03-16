@@ -1,0 +1,33 @@
+{% extends 'app_mainpage/base.html' %}
+
+{% block content %}
+
+								<div class="col-main col-12 col-lg-8 pe-lg-4">
+								
+									<section class="resume-summary-section resume-section">
+										<h3 class="resume-section-heading text-uppercase py-2 py-lg-3 py-2 py-lg-3"><i class="resume-section-heading-icon bi bi-person me-2"></i>{{object.article_head}}</h3>
+										<div class="resume-summary-desc">
+											<img width=50% src="/media/{{object.image}}">
+											<div>{{object.article_body}}</div>
+
+											{% if request.user == object.author %}
+											<p>
+												<a href='{% url 'app_blog:blog_update' object.pk %}'>Редактировать</a>
+												<a href='{% url 'app_blog:blog_delete' object.pk %}'>Удалить</a>
+											</p>
+											{% endif %}
+
+											<p>created {{object.date_create}}</p>
+											<p>last updated {{object.date_last_change}}</p>
+											<p>views {{object.num_of_views}}</p>
+
+										</div>
+									</section><!--//resume-section-->
+									<hr>
+
+							
+								
+								
+								</div><!--//col-8-->
+
+{% endblock %}
