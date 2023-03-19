@@ -5,7 +5,7 @@ from app_spammy.models import Client, Newsletter, MessageToSend
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.core.mail import EmailMessage
 from app_users.models import Users
 
 
@@ -14,7 +14,7 @@ class ClientListView(ListView):
     template_name = 'app_spammy/client_list.html'
     paginate_by = 2
     def get_queryset(self):
-        return Client.objects.filter(author=self.request.user)
+        return Client.objects.filter(author=self.request.user).order_by('pk')
 
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
@@ -62,7 +62,12 @@ class NewsletterListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        return Newsletter.objects.filter(author=self.request.user)
+        if self.request.user.groups.filter(name='manager').exists():
+            return Newsletter.objects.order_by('pk')
+        else:
+            return Newsletter.objects.filter(author=self.request.user).order_by('pk')
+
+
 
 
 class NewsletterCreateView(LoginRequiredMixin, CreateView):
@@ -103,7 +108,7 @@ class MessageToSendListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        return MessageToSend.objects.filter(author=self.request.user)
+        return MessageToSend.objects.filter(author=self.request.user).order_by('pk')
 
 
 class MessageToSendCreateView(LoginRequiredMixin, CreateView):
@@ -145,9 +150,35 @@ class MessageToSendDeleteView(DeleteView):
 
 def change_status(request, pk):
     maillist_item = get_object_or_404(Newsletter, pk=pk)
-    if maillist_item.mailing_status == 'created':
-        maillist_item.mailing_status = 'launched'
-    elif maillist_item.mailing_status == 'launched':
+    if maillist_item.mailing_status == 'created' and maillist_item.author==request.user:
+        if hasattr(maillist_item, 'messagetosend'):
+            start_mailing(maillist_item)
+            maillist_item.mailing_status = 'launched'
+        else:
+            raise Http404("Чтобы запустить рассылку, вам нужно создать письмо")
+    elif maillist_item.mailing_status == 'launched' and maillist_item.author==request.user:
         maillist_item.mailing_status = 'created'
+    else:
+        raise Http404("Только автор рассылки может запустить (остановить) рассылку")
     maillist_item.save()
     return redirect(reverse_lazy('app_spammy:newsletter_list'))
+
+def change_status_super(request, pk):
+    maillist_item = get_object_or_404(Newsletter, pk=pk)
+    if (maillist_item.mailing_status == 'created' or maillist_item.mailing_status == 'launched') and request.user.groups.filter(name='manager').exists():
+        maillist_item.mailing_status = 'disabled'
+    else:
+        raise Http404("Только менеджер может заблокировать рассылку")
+    maillist_item.save()
+    return redirect(reverse_lazy('app_spammy:newsletter_list'))
+
+
+def start_mailing(maillist_item):
+    mailru = maillist_item.messagetosend
+    mail_subject = mailru.letter_subject
+    message = mailru.body_of_the_letter
+    mails = []
+    for emailto in maillist_item.client.all():
+        mails.append(emailto.email)
+    email = EmailMessage(mail_subject, message, to=mails)  #[new_user.email])
+    email.send()

@@ -3,7 +3,7 @@ from config import settings
 from app_spammy.views import ClientListView, ClientCreateView, ClientUpdateView, \
     ClientDeleteView, NewsletterListView, NewsletterCreateView, NewsletterUpdateView, \
     NewsletterDeleteView, MessageToSendListView, MessageToSendCreateView, \
-    MessageToSendUpdateView, MessageToSendDeleteView, change_status
+    MessageToSendUpdateView, MessageToSendDeleteView, change_status, change_status_super
 # , , AttemptToSendListView, , , , ,
 from django.conf.urls.static import static
 
@@ -30,4 +30,6 @@ urlpatterns = [
 
 
     path('status/<int:pk>/', change_status, name='status'),
+    path('status_super/<int:pk>/', change_status_super, name='status_super'),
+
 ]

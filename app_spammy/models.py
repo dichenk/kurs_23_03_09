@@ -34,6 +34,7 @@ class Newsletter(models.Model):
         ('completed,', 'завершена'),
         ('created', 'создана'),
         ('launched', 'запущена'),
+        ('disabled', 'выключена')
     )
     name_of = models.CharField(
         max_length=150,
@@ -66,7 +67,7 @@ class Newsletter(models.Model):
         verbose_name_plural = 'Рассылки'
 
     def __str__(self):
-        return f'{self.posting_time}\n{self.frequency}\n{self.mailing_status}\n'
+        return f'{self.name_of}\n{self.comment}\n{self.mailing_status}\n'
 
 @with_author
 class MessageToSend(models.Model):

@@ -1,4 +1,6 @@
 {% extends 'app_mainpage/base.html' %}
+{% load custom_tag %}
+
 
 {% block content %}
 
@@ -29,6 +31,11 @@
 														<p><a href='{% url 'app_spammy:status' object.pk %}'> - start mailinglist</a></p>
 													{% elif object.mailing_status == 'launched' %}
 														<p><a href='{% url 'app_spammy:status' object.pk %}'> - stop mailinglist</a></p>
+													{% endif %}
+													{% if request.user|has_group:"manager" %}
+													{%  if object.mailing_status == 'created' or object.mailing_status == 'launched' %}
+														<p><a href='{% url 'app_spammy:status_super' object.pk %}'> - disable mailinglist</a></p>
+													{% endif %}
 													{% endif %}
 													<a href="#" class="card-link">Подробнее</a>
 													<a href="{% url 'app_spammy:update_newsletter' object.pk %}" class="card-link">Редактировать</a>
