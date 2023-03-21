@@ -182,3 +182,7 @@ def start_mailing(maillist_item):
         mails.append(emailto.email)
     email = EmailMessage(mail_subject, message, to=mails)  #[new_user.email])
     email.send()
+    
+def test_mailll():
+    email = EmailMessage('test', 'testtest', to=['dchenk@gmail.com'])  #[new_user.email])
+    email.send()
