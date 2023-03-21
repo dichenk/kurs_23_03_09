@@ -159,26 +159,3 @@ LOGOUT_REDIRECT_URL = '../../'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = 'media/'
-
-# Celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-# CELERY_IMPORTS = ('app_spammy.tasks',)
-
-# CELERY_BEAT_SCHEDULE = {
-    # 'main_task': {
-        # 'task': 'app_spammy.tasks.make_newsletter',
-        # 'schedule': 25.0,
-    # },
-    # 'main_task2': {
-        # 'task': 'tasks.send_pls',
-        # 'schedule': 5.0,
-    # }, 
-# }
-
-
-
