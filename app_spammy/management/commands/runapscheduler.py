@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def my_job():
-    send_emails.test_mail()
+    send_emails.check_status()
 
 
 # The `close_old_connections` decorator ensures that database connections, that have become

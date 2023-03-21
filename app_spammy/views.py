@@ -180,6 +180,6 @@ def start_mailing(maillist_item):
     mails = []
     for emailto in maillist_item.client.all():
         mails.append(emailto.email)
-    email = EmailMessage(mail_subject, message, to=mails)  #[new_user.email])
+    email = EmailMessage(mail_subject, message, to=mails)
     email.send()
 
