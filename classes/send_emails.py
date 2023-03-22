@@ -41,7 +41,12 @@ def take_data_from_db():
 	return df
 
 def send_some_mails(data_for_emails):
-	mail = EmailMessage('test', 'testtest', to=['dchenk@gmail.com'])
+	for index, row in data_for_emails.iterrows():
+		what = row['letter_subject']
+		why = row['body_of_the_letter']
+		where = [row['email']]
+		email = EmailMessage(what, why, to=where)
+		email.send()
 	print('success')
 
 def change_data_in_db(some_info):
@@ -64,8 +69,8 @@ def change_data_in_db(some_info):
 
 def check_status():
 	some_info = take_data_from_db()  # Выборка из бд. По ней будем отправлять письма
-	change_data_in_db(some_info)  # Отправляем запрос на изменение сроков отправки - в соответствии с периодичностью.
 	send_some_mails(some_info)  # Отправляем письма по рассылке
+	change_data_in_db(some_info)  # Отправляем запрос на изменение сроков отправки - в соответствии с периодичностью.
 
 '''
 #change date of newsletter using frequency#
