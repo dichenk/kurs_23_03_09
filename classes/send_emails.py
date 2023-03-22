@@ -2,15 +2,26 @@ from django.core.mail import EmailMessage
 from app_spammy.models import Client, Newsletter, MessageToSend
 import sqlite3
 import pandas as pd
+from datetime import date
+from datetime import timedelta
+
+
+today = date.today()
 
 
 def take_data_from_db():
 	conn = sqlite3.connect('db.sqlite3')
-
 	query_text ='''
 	SELECT
-	*
-	FROM app_spammy_newsletter
+	app_spammy_newsletter.id, letter_subject, body_of_the_letter, email, frequency
+	FROM
+	app_spammy_newsletter
+	INNER JOIN app_spammy_messagetosend
+	ON app_spammy_messagetosend.newsletter_id=app_spammy_newsletter.id
+	INNER JOIN app_spammy_newsletter_client
+	ON app_spammy_newsletter.id=app_spammy_newsletter_client.newsletter_id
+	INNER JOIN app_spammy_client
+	ON app_spammy_newsletter_client.client_id=app_spammy_client.id
 	'''
 	query_part ='''
 	WHERE(
@@ -33,34 +44,34 @@ def send_some_mails(data_for_emails):
 	mail = EmailMessage('test', 'testtest', to=['dchenk@gmail.com'])
 	print('success')
 
+def change_data_in_db(some_info):
+	adding_periods = {'once a day': 1, 'once a week': 7, 'once a month': 30}
+	change_data = some_info.loc[:]['id']  # Выборка выборки. По ней будем менять отправка письма - планируем следующую отправку
+	for i in set(change_data):
+		data_frequency = some_info.query('id==@i').loc[0]['frequency']
+		data_frequency = adding_periods[data_frequency]
+		change_query = f'''
+		UPDATE app_spammy_newsletter 
+		SET posting_date = date('now','+{data_frequency} day')
+		WHERE app_spammy_newsletter.id={i}
+		'''
+		conn = sqlite3.connect('db.sqlite3')
+		cursor = conn.cursor()
+		cursor.execute(change_query)
+		conn.commit()
+		conn.close()
+
 
 def check_status():
-	some_info = take_data_from_db()
-	print(some_info)
-	send_some_mails(some_info)
+	some_info = take_data_from_db()  # Выборка из бд. По ней будем отправлять письма
+	change_data_in_db(some_info)  # Отправляем запрос на изменение сроков отправки - в соответствии с периодичностью.
+	send_some_mails(some_info)  # Отправляем письма по рассылке
 
 '''
-import time
-
 #change date of newsletter using frequency#
 def query_big(data):
     return f'UPDATE spammy_newsletter SET posting_date = CURRENT_DATE ' \
            f'+ {adding_periods[data]} {query_part} AND frequency=\'{data}\';'
-
-
-#take data for doing maillist#
-query_small = f'SELECT ' \
-              f'letter_subject,' \
-              f'body_of_the_letter,' \
-              f'email ' \
-              f'FROM spammy_newsletter ' \
-              f'INNER JOIN spammy_newsletter_client ' \
-              f'ON newsletter_id=spammy_newsletter.id ' \
-              f'INNER JOIN spammy_client ' \
-              f'ON client_id=spammy_client.id ' \
-              f'INNER JOIN spammy_messagetosend ' \
-              f'ON spammy_messagetosend.newsletter_id=spammy_newsletter.id ' \
-              f'{query_part};'
 
 
 def make_newsletter(*args, **kwargs):
