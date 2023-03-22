@@ -181,3 +181,10 @@ APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'our_cache')
+    }
+}

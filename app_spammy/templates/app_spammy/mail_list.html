@@ -1,6 +1,8 @@
 {% extends 'app_mainpage/base.html' %}
+{% load cache %}
 
 {% block content %}
+{% cache 60 mail_list %}
 
 								<div class="col-main col-12 col-lg-8 pe-lg-4">
 									<section class="resume-summary-section resume-section">
@@ -51,4 +53,5 @@
 								{% endif %}
 							</div><!--//col-8-->
 
+{% endcache %}
 {% endblock %}
